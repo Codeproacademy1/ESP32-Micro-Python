@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 LED Projects with MicroPython</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        h1, h2, h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            color: var(--secondary);
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .led-explanation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .led-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .led-diagram {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+        
+        .led-symbol {
+            font-size: 100px;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .project-card {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 4px solid var(--secondary);
+            cursor: pointer;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .project-card h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #444;
+        }
+        
+        .copy-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .keyword {
+            color: #569cd6;
+        }
+        
+        .function {
+            color: #dcdcaa;
+        }
+        
+        .string {
+            color: #ce9178;
+        }
+        
+        .comment {
+            color: #6a9955;
+            font-style: italic;
+        }
+        
+        .number {
+            color: #b5cea8;
+        }
+        
+        .operator {
+            color: #d4d4d4;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+            margin-top: 0.5rem;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .connection-guide {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .wiring-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .wiring-diagram {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+        
+        .esp32-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+        
+        .project-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 900px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--dark);
+            z-index: 10;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            padding: 0.5rem 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+        }
+        
+        .tab-button.active {
+            border-bottom: 2px solid var(--secondary);
+            color: var(--secondary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .function-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .function-table th, .function-table td {
+            border: 1px solid #ddd;
+            padding: 0.8rem;
+            text-align: left;
+        }
+        
+        .function-table th {
+            background: var(--light);
+        }
+        
+        .function-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .led-explanation, .connection-guide {
+                flex-direction: column;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 1rem;
+            }
+            
+            .tab-buttons {
+                flex-direction: column;
+            }
+            
+            .tab-button {
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>ESP32 LED Projects with MicroPython</h1>
+            <p>Learn how to connect LEDs to ESP32 and explore various MicroPython projects</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <section id="what-is-led">
+            <h2>What is an LED?</h2>
+            <div class="led-explanation">
+                <div class="led-info">
+                    <p>LED stands for <strong>Light Emitting Diode</strong>. It's a semiconductor device that emits light when an electric current passes through it.</p>
+                    <p>Unlike traditional light bulbs, LEDs are:</p>
+                    <ul>
+                        <li>More energy-efficient</li>
+                        <li>Longer-lasting</li>
+                        <li>Available in various colors</li>
+                        <li>Smaller in size</li>
+                    </ul>
+                    <p>In electronics projects, LEDs are commonly used as indicators, displays, and for visual feedback.</p>
+                    <p>LEDs have two leads (legs):</p>
+                    <ul>
+                        <li><strong>Anode (+):</strong> Longer lead, connects to positive voltage</li>
+                        <li><strong>Cathode (-):</strong> Shorter lead, connects to ground</li>
+                    </ul>
+                </div>
+                <div class="led-diagram">
+                    <div class="led-symbol">⚡</div>
+                    <p>LED Symbol</p>
+                    <img src="https://www.circuitbasics.com/wp-content/uploads/2015/09/Introduction-to-LEDs-LED-Polarity-1024x576.jpg" alt="LED Diagram" class="esp32-img">
+                </div>
+            </div>
+        </section>
+
+        <section id="connecting-led">
+            <h2>How to Connect LED with ESP32</h2>
+            <div class="connection-guide">
+                <div class="wiring-info">
+                    <p>Connecting an LED to an ESP32 is straightforward, but requires a few components:</p>
+                    <ul>
+                        <li><strong>ESP32 Development Board</strong></li>
+                        <li><strong>LED</strong> (any color)</li>
+                        <li><strong>Resistor</strong> (220Ω to 470Ω recommended)</li>
+                        <li><strong>Breadboard and jumper wires</strong></li>
+                    </ul>
+                    <p><strong>Connection Steps:</strong></p>
+                    <ol>
+                        <li>Connect the longer leg (anode) of the LED to a GPIO pin on the ESP32 (e.g., GPIO2)</li>
+                        <li>Connect the shorter leg (cathode) of the LED to one end of the resistor</li>
+                        <li>Connect the other end of the resistor to GND on the ESP32</li>
+                    </ol>
+                    <p><strong>Important:</strong> Always use a current-limiting resistor to prevent damaging the LED or ESP32.</p>
+                </div>
+                <div class="wiring-diagram">
+                    <img src="https://randomnerdtutorials.com/wp-content/uploads/2019/01/ESP32-LED-Blink-Wiring-Diagram.png" alt="ESP32 LED Connection Diagram" class="esp32-img">
+                    <p>Typical ESP32 LED Connection</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="micropython-basics">
+            <h2>MicroPython Basics for ESP32</h2>
+            <p>MicroPython is a lean and efficient implementation of Python 3 for microcontrollers. Here's a simple example to blink an LED:</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Basic LED Blink Example</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code><span class="keyword">from</span> machine <span class="keyword">import</span> Pin
+<span class="keyword">import</span> time
+
+<span class="comment"># Initialize LED on GPIO2</span>
+led = Pin(<span class="number">2</span>, Pin.OUT)
+
+<span class="keyword">while</span> <span class="keyword">True</span>:
+    led.value(<span class="number">1</span>)  <span class="comment"># Turn LED on</span>
+    time.sleep(<span class="number">1</span>)   <span class="comment"># Wait 1 second</span>
+    led.value(<span class="number">0</span>)  <span class="comment"># Turn LED off</span>
+    time.sleep(<span class="number">1</span>)   <span class="comment"># Wait 1 second</span></code></pre>
+            </div>
+            
+            <h3>Complete MicroPython Functions for LED Control</h3>
+            <table class="function-table">
+                <thead>
+                    <tr>
+                        <th>Function/Class</th>
+                        <th>Description</th>
+                        <th>Example Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>Pin(pin_number, mode)</code></td>
+                        <td>Create a Pin object for GPIO control</td>
+                        <td><code>led = Pin(2, Pin.OUT)</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>Pin.OUT</code></td>
+                        <td>Set pin as output</td>
+                        <td><code>Pin(2, Pin.OUT)</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>Pin.IN</code></td>
+                        <td>Set pin as input</td>
+                        <td><code>button = Pin(4, Pin.IN)</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>Pin.PULL_UP</code></td>
+                        <td>Enable internal pull-up resistor</td>
+                        <td><code>button = Pin(4, Pin.IN, Pin.PULL_UP)</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>Pin.value([value])</code></td>
+                        <td>Set or get pin value (0 or 1)</td>
+                        <td><code>led.value(1)</code> or <code>state = button.value()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>Pin.on()</code></td>
+                        <td>Set pin to high (turn LED on)</td>
+                        <td><code>led.on()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>Pin.off()</code></td>
+                        <td>Set pin to low (turn LED off)</td>
+                        <td><code>led.off()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>PWM(Pin(pin), freq)</code></td>
+                        <td>Create PWM object for analog control</td>
+                        <td><code>pwm = PWM(Pin(2), freq=1000)</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>PWM.duty(value)</code></td>
+                        <td>Set PWM duty cycle (0-1023)</td>
+                        <td><code>pwm.duty(512)</code> (50% brightness)</td>
+                    </tr>
+                    <tr>
+                        <td><code>PWM.freq(value)</code></td>
+                        <td>Set PWM frequency</td>
+                        <td><code>pwm.freq(500)</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>PWM.deinit()</code></td>
+                        <td>Turn off PWM</td>
+                        <td><code>pwm.deinit()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>time.sleep(seconds)</code></td>
+                        <td>Delay execution for specified seconds</td>
+                        <td><code>time.sleep(0.5)</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>time.sleep_ms(ms)</code></td>
+                        <td>Delay execution for milliseconds</td>
+                        <td><code>time.sleep_ms(100)</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>time.sleep_us(us)</code></td>
+                        <td>Delay execution for microseconds</td>
+                        <td><code>time.sleep_us(500)</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>time.ticks_ms()</code></td>
+                        <td>Get current time in milliseconds</td>
+                        <td><code>start = time.ticks_ms()</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>time.ticks_diff(t1, t2)</code></td>
+                        <td>Calculate difference between ticks</td>
+                        <td><code>elapsed = time.ticks_diff(t2, t1)</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>urandom.getrandbits(bits)</code></td>
+                        <td>Generate random number</td>
+                        <td><code>random_val = urandom.getrandbits(8)</code></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Advanced LED Control Examples</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span>PWM for LED Brightness Control</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code><span class="keyword">from</span> machine <span class="keyword">import</span> Pin, PWM
+<span class="keyword">import</span> time
+
+<span class="comment"># Create PWM object on GPIO2 with 1kHz frequency</span>
+led = PWM(Pin(<span class="number">2</span>), freq=<span class="number">1000</span>)
+
+<span class="comment"># Fade LED in and out</span>
+<span class="keyword">while</span> <span class="keyword">True</span>:
+    <span class="comment"># Fade in</span>
+    <span class="keyword">for</span> duty <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">1024</span>, <span class="number">10</span>):
+        led.duty(duty)
+        time.sleep_ms(<span class="number">10</span>)
+    
+    <span class="comment"># Fade out</span>
+    <span class="keyword">for</span> duty <span class="keyword">in</span> range(<span class="number">1023</span>, -<span class="number">1</span>, -<span class="number">10</span>):
+        led.duty(duty)
+        time.sleep_ms(<span class="number">10</span>)</code></pre>
+            </div>
+        </section>
+
+        <section id="projects">
+            <h2>ESP32 LED Projects</h2>
+            <p>Explore these 15 MicroPython projects to master LED control with ESP32:</p>
+            
+            <div class="projects-grid">
+                <!-- Project cards will be generated by JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="projectModal" class="project-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="modalContent">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>ESP32 LED Projects with MicroPython</p>
+            <p>Educational resource for learning electronics and programming</p>
+        </div>
+    </footer>
+
+    <script>
+        // Project data
+        const projects = [
+            {
+                id: 1,
+                title: "ESP32 + LED + Button (Toggle)",
+                description: "Toggle LED state with each button press",
+                idea: "Turn LED on/off with each button press",
+                code: `from machine import Pin
+import time
+
+led = Pin(2, Pin.OUT)
+button = Pin(4, Pin.IN, Pin.PULL_UP)
+
+led_state = 0
+
+while True:
+    if button.value() == 0:
+        led_state = not led_state
+        led.value(led_state)
+        time.sleep(0.3)`
+            },
+            {
+                id: 2,
+                title: "ESP32 + LED + Button (On/Off)",
+                description: "First press turns LED on, second press turns it off",
+                idea: "Simple on/off control with a single button",
+                code: `from machine import Pin
+import time
+
+led = Pin(2, Pin.OUT)
+button = Pin(4, Pin.IN, Pin.PULL_UP)
+
+led_on = False
+
+while True:
+    if button.value() == 0:
+        led_on = not led_on
+        led.value(led_on)
+        time.sleep(0.3)`
+            },
+            {
+                id: 3,
+                title: "ESP32 + LED + 2 Buttons",
+                description: "One button turns LED on, the other turns it off",
+                idea: "Separate buttons for on and off control",
+                code: `from machine import Pin
+import time
+
+led = Pin(2, Pin.OUT)
+button_on = Pin(4, Pin.IN, Pin.PULL_UP)
+button_off = Pin(5, Pin.IN, Pin.PULL_UP)
+
+while True:
+    if button_on.value() == 0:
+        led.value(1)
+        time.sleep(0.2)
+    if button_off.value() == 0:
+        led.value(0)
+        time.sleep(0.2)`
+            },
+            {
+                id: 4,
+                title: "ESP32 + 2 LED + 2 Buttons",
+                description: "Each button controls a separate LED",
+                idea: "Independent control of multiple LEDs",
+                code: `from machine import Pin
+import time
+
+led1 = Pin(2, Pin.OUT)
+led2 = Pin(15, Pin.OUT)
+
+button1 = Pin(4, Pin.IN, Pin.PULL_UP)
+button2 = Pin(5, Pin.IN, Pin.PULL_UP)
+
+while True:
+    if button1.value() == 0:
+        led1.value(1)
+    else:
+        led1.value(0)
+    
+    if button2.value() == 0:
+        led2.value(1)
+    else:
+        led2.value(0)`
+            },
+            {
+                id: 5,
+                title: "ESP32 + LED + 2 Buttons (Both Pressed)",
+                description: "LED turns on only when both buttons are pressed",
+                idea: "Require simultaneous button presses",
+                code: `from machine import Pin
+import time
+
+led = Pin(2, Pin.OUT)
+button1 = Pin(4, Pin.IN, Pin.PULL_UP)
+button2 = Pin(5, Pin.IN, Pin.PULL_UP)
+
+while True:
+    if button1.value() == 0 and button2.value() == 0:
+        led.value(1)
+    else:
+        led.value(0)
+    time.sleep(0.1)`
+            },
+            {
+                id: 6,
+                title: "ESP32 + LED + Button (Increase Brightness)",
+                description: "Each button press increases LED brightness using PWM",
+                idea: "PWM-based brightness control",
+                code: `from machine import Pin, PWM
+import time
+
+led = PWM(Pin(2), freq=1000)
+button = Pin(4, Pin.IN, Pin.PULL_UP)
+
+brightness = 0
+step = 200
+
+while True:
+    if button.value() == 0:
+        brightness += step
+        if brightness > 1023:
+            brightness = 0
+        led.duty(brightness)
+        time.sleep(0.3)`
+            },
+            {
+                id: 7,
+                title: "ESP32 + 5 LED + Button (Sequential On)",
+                description: "Each press turns on the next LED, keeping previous ones on",
+                idea: "Sequential LED activation",
+                code: `from machine import Pin
+import time
+
+leds = [Pin(pin, Pin.OUT) for pin in [2, 15, 18, 19, 21]]
+button = Pin(4, Pin.IN, Pin.PULL_UP)
+
+index = 0
+
+while True:
+    if button.value() == 0:
+        if index < len(leds):
+            leds[index].value(1)
+            index += 1
+        time.sleep(0.3)`
+            },
+            {
+                id: 8,
+                title: "ESP32 + 5 LED + Button (One at a Time)",
+                description: "Each press moves the light to the next LED, turning off the previous",
+                idea: "Single LED activation at a time",
+                code: `from machine import Pin
+import time
+
+leds = [Pin(pin, Pin.OUT) for pin in [2, 15, 18, 19, 21]]
+button = Pin(4, Pin.IN, Pin.PULL_UP)
+
+index = 0
+
+while True:
+    if button.value() == 0:
+        for led in leds:
+            led.value(0)
+        leds[index].value(1)
+        index = (index + 1) % len(leds)
+        time.sleep(0.3)`
+            },
+            {
+                id: 9,
+                title: "ESP32 + 5 LED + 3 Buttons (Animations)",
+                description: "Different buttons trigger different LED animations",
+                idea: "Multiple animation modes",
+                code: `from machine import Pin
+import time
+
+leds = [Pin(pin, Pin.OUT) for pin in [2, 15, 18, 19, 21]]
+button1 = Pin(4, Pin.IN, Pin.PULL_UP)
+button2 = Pin(5, Pin.IN, Pin.PULL_UP)
+button3 = Pin(22, Pin.IN, Pin.PULL_UP)
+
+def all_on():
+    for led in leds:
+        led.value(1)
+
+def all_off():
+    for led in leds:
+        led.value(0)
+
+def chase():
+    for led in leds:
+        all_off()
+        led.value(1)
+        time.sleep(0.2)
+
+def flash():
+    for _ in range(3):
+        all_on()
+        time.sleep(0.2)
+        all_off()
+        time.sleep(0.2)
+
+while True:
+    if button1.value() == 0:
+        all_on()
+        time.sleep(0.3)
+    elif button2.value() == 0:
+        chase()
+        time.sleep(0.3)
+    elif button3.value() == 0:
+        flash()
+        time.sleep(0.3)`
+            },
+            {
+                id: 10,
+                title: "ESP32 + 5 LED + 2 Buttons (Counter + Display)",
+                description: "Count button presses and display the count on LEDs",
+                idea: "Visual counter using LEDs",
+                code: `from machine import Pin
+import time
+
+leds = [Pin(pin, Pin.OUT) for pin in [2, 15, 18, 19, 21]]
+button_count = Pin(4, Pin.IN, Pin.PULL_UP)
+button_show = Pin(5, Pin.IN, Pin.PULL_UP)
+
+count = 0
+
+while True:
+    if button_count.value() == 0:
+        count += 1
+        if count > len(leds):
+            count = len(leds)
+        time.sleep(0.3)
+    
+    if button_show.value() == 0:
+        for i, led in enumerate(leds):
+            if i < count:
+                led.value(1)
+            else:
+                led.value(0)
+        time.sleep(0.3)`
+            },
+            {
+                id: 11,
+                title: "ESP32 + 5 LED + Button (Invert All)",
+                description: "Each press inverts the state of all LEDs",
+                idea: "Toggle all LEDs simultaneously",
+                code: `from machine import Pin
+import time
+
+leds = [Pin(pin, Pin.OUT) for pin in [2, 15, 18, 19, 21]]
+button = Pin(4, Pin.IN, Pin.PULL_UP)
+
+state = 0
+
+while True:
+    if button.value() == 0:
+        state = not state
+        for led in leds:
+            led.value(state)
+        time.sleep(0.3)`
+            },
+            {
+                id: 12,
+                title: "ESP32 + 5 LED + 2 Buttons (Gradual On/Off)",
+                description: "Gradually turn LEDs on/off with separate buttons",
+                idea: "Sequential activation/deactivation",
+                code: `from machine import Pin
+import time
+
+leds = [Pin(pin, Pin.OUT) for pin in [2, 15, 18, 19, 21]]
+button_on = Pin(4, Pin.IN, Pin.PULL_UP)
+button_off = Pin(5, Pin.IN, Pin.PULL_UP)
+
+while True:
+    if button_on.value() == 0:
+        for led in leds:
+            led.value(1)
+            time.sleep(0.2)
+    if button_off.value() == 0:
+        for led in leds:
+            led.value(0)
+            time.sleep(0.2)`
+            },
+            {
+                id: 13,
+                title: "ESP32 + 5 LED + Button (Running Light)",
+                description: "Create a running light effect with LEDs",
+                idea: "LED chasing animation",
+                code: `from machine import Pin
+import time
+
+leds = [Pin(pin, Pin.OUT) for pin in [2, 15, 18, 19, 21]]
+button = Pin(4, Pin.IN, Pin.PULL_UP)
+
+while True:
+    if button.value() == 0:
+        for led in leds:
+            for l in leds:
+                l.value(0)
+            led.value(1)
+            time.sleep(0.2)
+        time.sleep(0.3)`
+            },
+            {
+                id: 14,
+                title: "ESP32 + 5 LED + 2 Buttons (Binary Counter)",
+                description: "Binary counter with reset functionality",
+                idea: "Display binary numbers using LEDs",
+                code: `from machine import Pin
+import time
+
+leds = [Pin(pin, Pin.OUT) for pin in [2, 15, 18, 19, 21]]
+button_next = Pin(4, Pin.IN, Pin.PULL_UP)
+button_reset = Pin(5, Pin.IN, Pin.PULL_UP)
+
+count = 0
+
+while True:
+    if button_next.value() == 0:
+        count += 1
+        if count >= 2**len(leds):
+            count = 0
+        for i, led in enumerate(leds):
+            led.value((count >> i) & 1)
+        time.sleep(0.3)
+    
+    if button_reset.value() == 0:
+        count = 0
+        for led in leds:
+            led.value(0)
+        time.sleep(0.3)`
+            },
+            {
+                id: 15,
+                title: "ESP32 + 5 LED + 3 Buttons (Modes)",
+                description: "Different buttons activate different LED modes",
+                idea: "Multiple lighting modes",
+                code: `from machine import Pin
+import time
+import urandom
+
+leds = [Pin(pin, Pin.OUT) for pin in [2, 15, 18, 19, 21]]
+button1 = Pin(4, Pin.IN, Pin.PULL_UP)
+button2 = Pin(5, Pin.IN, Pin.PULL_UP)
+button3 = Pin(22, Pin.IN, Pin.PULL_UP)
+
+def all_blink():
+    for _ in range(3):
+        for led in leds: led.value(1)
+        time.sleep(0.3)
+        for led in leds: led.value(0)
+        time.sleep(0.3)
+
+def running_light():
+    for led in leds:
+        for l in leds: l.value(0)
+        led.value(1)
+        time.sleep(0.2)
+
+def random_light():
+    for _ in range(5):
+        r = urandom.getrandbits(3) % len(leds)
+        for i, led in enumerate(leds):
+            led.value(1 if i == r else 0)
+        time.sleep(0.3)
+
+while True:
+    if button1.value() == 0:
+        all_blink()
+        time.sleep(0.3)
+    elif button2.value() == 0:
+        running_light()
+        time.sleep(0.3)
+    elif button3.value() == 0:
+        random_light()
+        time.sleep(0.3)`
+            }
+        ];
+
+        // Function to create project cards
+        function createProjectCards() {
+            const projectsGrid = document.querySelector('.projects-grid');
+            
+            projects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.innerHTML = `
+                    <h3>Project ${project.id}: ${project.title}</h3>
+                    <p>${project.description}</p>
+                    <button class="btn view-project" data-id="${project.id}">View Project</button>
+                `;
+                projectsGrid.appendChild(card);
+            });
+            
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-project').forEach(button => {
+                button.addEventListener('click', function() {
+                    const projectId = parseInt(this.getAttribute('data-id'));
+                    openProjectModal(projectId);
+                });
+            });
+            
+            // Also make the entire card clickable
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (!e.target.classList.contains('btn')) {
+                        const button = this.querySelector('.view-project');
+                        const projectId = parseInt(button.getAttribute('data-id'));
+                        openProjectModal(projectId);
+                    }
+                });
+            });
+        }
+
+        // Function to open project modal
+        function openProjectModal(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+            
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <h2>Project ${project.id}: ${project.title}</h2>
+                <p><strong>Idea:</strong> ${project.idea}</p>
+                <p><strong>Description:</strong> ${project.description}</p>
+                
+                <div class="tab-buttons">
+                    <button class="tab-button active" data-tab="code">MicroPython Code</button>
+                    <button class="tab-button" data-tab="explanation">Explanation</button>
+                    <button class="tab-button" data-tab="components">Components</button>
+                </div>
+                
+                <div class="tab-content active" id="code-tab">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Project ${project.id} Code</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                        </div>
+                        <pre><code>${formatCode(project.code)}</code></pre>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="explanation-tab">
+                    <h3>How It Works</h3>
+                    <p>${getProjectExplanation(project.id)}</p>
+                    
+                    <h3>Key MicroPython Functions Used</h3>
+                    <ul>
+                        ${getFunctionsUsed(project.code).map(func => `<li><code>${func}</code></li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="tab-content" id="components-tab">
+                    <h3>Required Components</h3>
+                    <ul>
+                        <li>ESP32 Development Board</li>
+                        <li>${getLEDCount(project.id)}</li>
+                        <li>${getButtonCount(project.id)}</li>
+                        <li>Resistors (220Ω recommended)</li>
+                        <li>Breadboard and jumper wires</li>
+                    </ul>
+                    
+                    <h3>Connection Guide</h3>
+                    <p>${getConnectionGuide(project.id)}</p>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button class="btn" onclick="navigateProject(${project.id - 1})" ${project.id === 1 ? 'disabled' : ''}>Previous Project</button>
+                    <button class="btn" onclick="navigateProject(${project.id + 1})" ${project.id === projects.length ? 'disabled' : ''}>Next Project</button>
+                </div>
+            `;
+            
+            // Add tab functionality
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.tab-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Add active class to current tab
+                    this.classList.add('active');
+                    document.getElementById(`${tabName}-tab`).classList.add('active');
+                });
+            });
+            
+            // Show modal
+            document.getElementById('projectModal').style.display = 'block';
+        }
+
+        // Function to format code with syntax highlighting
+        function formatCode(code) {
+            return code
+                .replace(/from/g, '<span class="keyword">from</span>')
+                .replace(/import/g, '<span class="keyword">import</span>')
+                .replace(/def/g, '<span class="keyword">def</span>')
+                .replace(/while/g, '<span class="keyword">while</span>')
+                .replace(/if/g, '<span class="keyword">if</span>')
+                .replace(/elif/g, '<span class="keyword">elif</span>')
+                .replace(/else/g, '<span class="keyword">else</span>')
+                .replace(/for/g, '<span class="keyword">for</span>')
+                .replace(/True/g, '<span class="keyword">True</span>')
+                .replace(/False/g, '<span class="keyword">False</span>')
+                .replace(/Pin\.OUT/g, '<span class="function">Pin.OUT</span>')
+                .replace(/Pin\.IN/g, '<span class="function">Pin.IN</span>')
+                .replace(/PULL_UP/g, '<span class="function">PULL_UP</span>')
+                .replace(/PWM/g, '<span class="function">PWM</span>')
+                .replace(/duty/g, '<span class="function">duty</span>')
+                .replace(/freq/g, '<span class="function">freq</span>')
+                .replace(/value/g, '<span class="function">value</span>')
+                .replace(/sleep/g, '<span class="function">sleep</span>')
+                .replace(/#.*$/gm, '<span class="comment">$&</span>')
+                .replace(/\d+/g, '<span class="number">$&</span>');
+        }
+
+        // Function to copy code to clipboard
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block').querySelector('code');
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            // Visual feedback
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
+        }
+
+        // Helper function to get button count for a project
+        function getButtonCount(projectId) {
+            switch(projectId) {
+                case 1:
+                case 2:
+                case 6:
+                case 7:
+                case 8:
+                case 11:
+                case 13:
+                    return '1 button';
+                case 3:
+                case 10:
+                case 12:
+                case 14:
+                    return '2 buttons';
+                case 4:
+                case 5:
+                case 9:
+                case 15:
+                    return '3 buttons';
+                default:
+                    return '1 button';
+            }
+        }
+
+        // Helper function to get LED count for a project
+        function getLEDCount(projectId) {
+            if (projectId >= 7) return '5 LEDs';
+            if (projectId === 4) return '2 LEDs';
+            return '1 LED';
+        }
+
+        // Helper function to get project explanation
+        function getProjectExplanation(projectId) {
+            const explanations = {
+                1: "This project demonstrates basic button interaction with an LED. Each time the button is pressed, the LED state toggles (on to off or off to on). The code uses a simple state variable that flips with each button press.",
+                2: "Similar to Project 1, but with a more explicit on/off state variable. The LED state is stored as a boolean value that toggles with each button press.",
+                3: "This project uses two separate buttons for controlling the LED - one to turn it on and another to turn it off. This provides more direct control over the LED state.",
+                4: "Expanding on previous projects, this uses two LEDs controlled by two separate buttons. Each button independently controls its corresponding LED.",
+                5: "This project requires both buttons to be pressed simultaneously to turn on the LED. It demonstrates how to check multiple conditions in an if statement.",
+                6: "Introduces PWM (Pulse Width Modulation) for controlling LED brightness. Each button press increases the brightness in steps, wrapping around to 0 when maximum brightness is reached.",
+                7: "This project sequentially turns on LEDs with each button press. Once an LED is turned on, it stays on until the program is reset.",
+                8: "Unlike Project 7, this project only keeps one LED on at a time. Each button press moves the active LED to the next position in sequence.",
+                9: "This more complex project offers three different LED animation modes controlled by three different buttons. Each button triggers a different pattern.",
+                10: "Implements a counter that increments with one button and displays the count on LEDs with another button. The number of lit LEDs corresponds to the count value.",
+                11: "A simple project that inverts the state of all LEDs with each button press. If LEDs are on, they turn off, and vice versa.",
+                12: "Creates a gradual lighting effect where LEDs turn on or off sequentially with a small delay between each, creating a smooth transition.",
+                13: "Implements a running light animation where LEDs light up one after another in sequence, creating a chasing effect.",
+                14: "A binary counter that displays numbers in binary format using the LEDs. One button increments the counter, another resets it to zero.",
+                15: "The most complex project with three different lighting modes: blinking all LEDs, running light, and random LED activation."
+            };
+            
+            return explanations[projectId] || "This project demonstrates various LED control techniques using MicroPython on the ESP32.";
+        }
+
+        // Helper function to get connection guide
+        function getConnectionGuide(projectId) {
+            if (projectId <= 3) {
+                return "Connect the LED to GPIO2 with a current-limiting resistor to GND. Connect the button(s) to the specified GPIO pins with pull-up resistors to 3.3V.";
+            } else if (projectId <= 6) {
+                return "Connect LEDs to the specified GPIO pins with current-limiting resistors to GND. Connect buttons to the specified GPIO pins with pull-up resistors to 3.3V.";
+            } else {
+                return "Connect 5 LEDs to GPIO pins 2, 15, 18, 19, and 21 with current-limiting resistors to GND. Connect buttons to the specified GPIO pins with pull-up resistors to 3.3V.";
+            }
+        }
+
+        // Helper function to extract functions used in code
+        function getFunctionsUsed(code) {
+            const functions = new Set();
+            
+            // Common MicroPython functions
+            const commonFuncs = ['Pin', 'PWM', 'value', 'duty', 'sleep', 'time', 'urandom'];
+            
+            commonFuncs.forEach(func => {
+                if (code.includes(func)) {
+                    functions.add(func);
+                }
+            });
+            
+            return Array.from(functions);
+        }
+
+        // Function to navigate between projects
+        function navigateProject(projectId) {
+            if (projectId >= 1 && projectId <= projects.length) {
+                openProjectModal(projectId);
+            }
+        }
+
+        // Close modal when clicking X
+        document.querySelector('.close-modal').addEventListener('click', function() {
+            document.getElementById('projectModal').style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('projectModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            createProjectCards();
+        });
+    </script>
+</body>
+</html>
