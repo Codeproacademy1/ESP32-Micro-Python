@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 Pin Configuration and Power Supply Guide</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --info: #1abc9c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        h1, h2, h3, h4 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            color: var(--secondary);
+        }
+        
+        h4 {
+            font-size: 1.2rem;
+            color: var(--info);
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .pin-explanation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .pin-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .pin-diagram {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+        
+        .pin-symbol {
+            font-size: 100px;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        
+        .pin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .pin-table th, .pin-table td {
+            border: 1px solid #ddd;
+            padding: 0.8rem;
+            text-align: left;
+        }
+        
+        .pin-table th {
+            background: var(--light);
+            font-weight: 600;
+        }
+        
+        .pin-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .pin-function {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin: 0.1rem;
+        }
+        
+        .digital { background: #e1f5fe; color: #01579b; }
+        .analog { background: #f3e5f5; color: #4a148c; }
+        .pwm { background: #e8f5e8; color: #1b5e20; }
+        .touch { background: #fff3e0; color: #e65100; }
+        .serial { background: #fce4ec; color: #880e4f; }
+        .spi { background: #e0f2f1; color: #004d40; }
+        .i2c { background: #e8eaf6; color: #1a237e; }
+        .power { background: #ffebee; color: #b71c1c; }
+        .ground { background: #f5f5f5; color: #212121; }
+        
+        .power-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .power-option {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--info);
+        }
+        
+        .power-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--info);
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #444;
+        }
+        
+        .copy-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .keyword {
+            color: #569cd6;
+        }
+        
+        .function {
+            color: #dcdcaa;
+        }
+        
+        .string {
+            color: #ce9178;
+        }
+        
+        .comment {
+            color: #6a9955;
+            font-style: italic;
+        }
+        
+        .number {
+            color: #b5cea8;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+            margin-top: 0.5rem;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .connection-guide {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .wiring-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .wiring-diagram {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+        
+        .esp32-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+        
+        .pin-configuration {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .config-card {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 4px solid var(--secondary);
+        }
+        
+        .config-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            padding: 0.5rem 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+        }
+        
+        .tab-button.active {
+            border-bottom: 2px solid var(--secondary);
+            color: var(--secondary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .pin-explanation, .connection-guide {
+                flex-direction: column;
+            }
+            
+            .power-options, .pin-configuration {
+                grid-template-columns: 1fr;
+            }
+            
+            .pin-table {
+                font-size: 0.8rem;
+            }
+            
+            .pin-table th, .pin-table td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>ESP32 Pin Configuration and Power Supply Guide</h1>
+            <p>Complete reference for ESP32 GPIO pins, input/output functions, and power options</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <section id="esp32-pinout">
+            <h2>ESP32 Development Board Pinout</h2>
+            <div class="pin-explanation">
+                <div class="pin-info">
+                    <p>The ESP32 microcontroller has a rich set of GPIO (General Purpose Input/Output) pins that can be configured for various functions. Understanding the pinout is essential for connecting components correctly.</p>
+                    <p><strong>Key Features of ESP32 Pins:</strong></p>
+                    <ul>
+                        <li>Up to 36 GPIO pins (depending on the module)</li>
+                        <li>Digital input and output capabilities</li>
+                        <li>Analog-to-Digital Converter (ADC) on 18 pins</li>
+                        <li>Digital-to-Analog Converter (DAC) on 2 pins</li>
+                        <li>Pulse Width Modulation (PWM) on all digital pins</li>
+                        <li>Touch sensor capability on 10 pins</li>
+                        <li>Multiple communication protocols (I2C, SPI, UART, I2S)</li>
+                    </ul>
+                </div>
+                <div class="pin-diagram">
+                    <img src="https://randomnerdtutorials.com/wp-content/uploads/2018/08/ESP32-DOIT-DEVKIT-V1-Board-Pinout-36-GPIOs-updated.jpg" alt="ESP32 Pinout Diagram" class="esp32-img">
+                    <p>Typical ESP32 Development Board Pinout</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pin-functions">
+            <h2>ESP32 Pin Functions and Capabilities</h2>
+            
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="all-pins">All GPIO Pins</button>
+                <button class="tab-button" data-tab="digital-io">Digital I/O</button>
+                <button class="tab-button" data-tab="analog-io">Analog I/O</button>
+                <button class="tab-button" data-tab="communication">Communication</button>
+                <button class="tab-button" data-tab="special">Special Functions</button>
+            </div>
+            
+            <div class="tab-content active" id="all-pins-tab">
+                <h3>Complete ESP32 GPIO Pin Reference</h3>
+                <table class="pin-table">
+                    <thead>
+                        <tr>
+                            <th>GPIO</th>
+                            <th>Input</th>
+                            <th>Output</th>
+                            <th>PWM</th>
+                            <th>ADC</th>
+                            <th>Touch</th>
+                            <th>Other Functions</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>Boot mode selection</td>
+                            <td>Pull-up required, affects boot</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>TX0</td>
+                            <td>Serial transmit</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>Boot mode, LED on board</td>
+                            <td>Often connected to onboard LED</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>RX0</td>
+                            <td>Serial receive</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>Boot mode</td>
+                            <td>Pull-down required, affects boot</td>
+                        </tr>
+                        <tr>
+                            <td>13</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>14</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>15</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>16</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>17</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>18</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>19</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>21</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>I2C SDA</td>
+                            <td>Default I2C data pin</td>
+                        </tr>
+                        <tr>
+                            <td>22</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>I2C SCL</td>
+                            <td>Default I2C clock pin</td>
+                        </tr>
+                        <tr>
+                            <td>23</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>25</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>DAC_1</td>
+                            <td>Digital-to-Analog Converter</td>
+                        </tr>
+                        <tr>
+                            <td>26</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>DAC_2</td>
+                            <td>Digital-to-Analog Converter</td>
+                        </tr>
+                        <tr>
+                            <td>27</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>32</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>33</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>General purpose</td>
+                        </tr>
+                        <tr>
+                            <td>34</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td></td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>Input only</td>
+                            <td>No output capability</td>
+                        </tr>
+                        <tr>
+                            <td>35</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td></td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>Input only</td>
+                            <td>No output capability</td>
+                        </tr>
+                        <tr>
+                            <td>36</td>
+                            <td>✓</td>
+                            <td></td>
+                            <td></td>
+                            <td>✓</td>
+                            <td></td>
+                            <td>Input only</td>
+                            <td>No output capability</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="tab-content" id="digital-io-tab">
+                <h3>Digital Input/Output Pins</h3>
+                <p>Digital pins can be configured as either inputs or outputs. As inputs, they read HIGH (3.3V) or LOW (0V). As outputs, they can source or sink current.</p>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>Digital I/O Example</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                    </div>
+                    <pre><code><span class="keyword">from</span> machine <span class="keyword">import</span> Pin
+
+<span class="comment"># Configure GPIO2 as output</span>
+led = Pin(<span class="number">2</span>, Pin.OUT)
+
+<span class="comment"># Configure GPIO4 as input with pull-up resistor</span>
+button = Pin(<span class="number">4</span>, Pin.IN, Pin.PULL_UP)
+
+<span class="comment"># Set output HIGH (3.3V)</span>
+led.value(<span class="number">1</span>)
+
+<span class="comment"># Read input state</span>
+button_state = button.value()</code></pre>
+                </div>
+                
+                <h4>Important Notes for Digital I/O:</h4>
+                <ul>
+                    <li>ESP32 GPIO pins operate at 3.3V logic levels (not 5V tolerant)</li>
+                    <li>Maximum current per pin: 40mA (12mA recommended for safety)</li>
+                    <li>Total current for all pins: 200mA</li>
+                    <li>Use pull-up or pull-down resistors for stable input readings</li>
+                </ul>
+            </div>
+            
+            <div class="tab-content" id="analog-io-tab">
+                <h3>Analog Input/Output Pins</h3>
+                <p>ESP32 has built-in ADC (Analog to Digital Converter) and DAC (Digital to Analog Converter) capabilities.</p>
+                
+                <h4>Analog Input (ADC)</h4>
+                <p>18 pins support 12-bit ADC with 0-3.3V range (4096 values from 0 to 4095).</p>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>ADC Example</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                    </div>
+                    <pre><code><span class="keyword">from</span> machine <span class="keyword">import</span> Pin, ADC
+
+<span class="comment"># Create ADC object on GPIO36</span>
+adc = ADC(Pin(<span class="number">36</span>))
+
+<span class="comment"># Configure ADC attenuation for 0-3.3V range</span>
+adc.atten(ADC.ATTN_11DB)
+
+<span class="comment"># Read analog value (0-4095)</span>
+value = adc.read()
+voltage = value * <span class="number">3.3</span> / <span class="number">4095</span>  <span class="comment"># Convert to voltage</span></code></pre>
+                </div>
+                
+                <h4>Analog Output (DAC)</h4>
+                <p>2 pins support 8-bit DAC with 0-3.3V range (256 values from 0 to 255).</p>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>DAC Example</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                    </div>
+                    <pre><code><span class="keyword">from</span> machine <span class="keyword">import</span> Pin, DAC
+
+<span class="comment"># Create DAC object on GPIO25</span>
+dac = DAC(Pin(<span class="number">25</span>))
+
+<span class="comment"># Write analog value (0-255)</span>
+dac.write(<span class="number">128</span>)  <span class="comment"># Output approximately 1.65V</span></code></pre>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="communication-tab">
+                <h3>Communication Protocol Pins</h3>
+                <p>ESP32 supports multiple communication protocols through specific pin assignments.</p>
+                
+                <h4>I2C (Inter-Integrated Circuit)</h4>
+                <p>Two-wire communication protocol. Default pins: GPIO21 (SDA), GPIO22 (SCL)</p>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>I2C Example</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                    </div>
+                    <pre><code><span class="keyword">from</span> machine <span class="keyword">import</span> Pin, SoftI2C
+
+<span class="comment"># Create I2C object</span>
+i2c = SoftI2C(scl=Pin(<span class="number">22</span>), sda=Pin(<span class="number">21</span>), freq=<span class="number">100000</span>)
+
+<span class="comment"># Scan for I2C devices</span>
+devices = i2c.scan()</code></pre>
+                </div>
+                
+                <h4>SPI (Serial Peripheral Interface)</h4>
+                <p>High-speed serial communication. Default pins: Various combinations available.</p>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>SPI Example</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                    </div>
+                    <pre><code><span class="keyword">from</span> machine <span class="keyword">import</span> Pin, SPI
+
+<span class="comment"># Create SPI object</span>
+spi = SPI(<span class="number">1</span>, baudrate=<span class="number">1000000</span>, polarity=<span class="number">0</span>, phase=<span class="number">0</span>,
+          sck=Pin(<span class="number">14</span>), mosi=Pin(<span class="number">13</span>), miso=Pin(<span class="number">12</span>))</code></pre>
+                </div>
+                
+                <h4>UART (Universal Asynchronous Receiver/Transmitter)</h4>
+                <p>Serial communication. Default pins: GPIO1 (TX), GPIO3 (RX)</p>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>UART Example</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                    </div>
+                    <pre><code><span class="keyword">from</span> machine <span class="keyword">import</span> UART
+
+<span class="comment"># Create UART object</span>
+uart = UART(<span class="number">1</span>, baudrate=<span class="number">9600</span>, tx=Pin(<span class="number">1</span>), rx=Pin(<span class="number">3</span>))
+
+<span class="comment"># Send data</span>
+uart.write(<span class="string">"Hello ESP32"</span>)
+
+<span class="comment"># Read data</span>
+data = uart.read()</code></pre>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="special-tab">
+                <h3>Special Function Pins</h3>
+                <p>Some pins have special purposes or restrictions.</p>
+                
+                <h4>Touch Sensor Pins</h4>
+                <p>10 pins support capacitive touch sensing.</p>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>Touch Sensor Example</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                    </div>
+                    <pre><code><span class="keyword">from</span> machine <span class="keyword">import</span> TouchPad, Pin
+<span class="keyword">import</span> time
+
+<span class="comment"># Create touch object on GPIO4</span>
+touch = TouchPad(Pin(<span class="number">4</span>))
+
+<span class="keyword">while</span> <span class="keyword">True</span>:
+    <span class="comment"># Read touch value (lower = touched)</span>
+    value = touch.read()
+    <span class="keyword">if</span> value < <span class="number">100</span>:  <span class="comment"># Threshold depends on setup</span>
+        print(<span class="string">"Touched!"</span>)
+    time.sleep(<span class="number">0.1</span>)</code></pre>
+                </div>
+                
+                <h4>Input-Only Pins</h4>
+                <p>GPIO 34, 35, 36, 39 can only be used as inputs (no output capability).</p>
+                
+                <h4>Boot Mode Pins</h4>
+                <p>GPIO 0, 2, 12, 15 affect boot mode. Avoid using these for critical functions.</p>
+            </div>
+        </section>
+
+        <section id="power-supply">
+            <h2>ESP32 Power Supply Options</h2>
+            <p>The ESP32 can be powered through several methods, each with advantages and limitations.</p>
+            
+            <div class="power-options">
+                <div class="power-option">
+                    <div class="power-icon">🔌</div>
+                    <h3>USB Power</h3>
+                    <p><strong>Voltage:</strong> 5V via USB connector</p>
+                    <p><strong>Current:</strong> Up to 500mA (typical)</p>
+                    <p><strong>Best for:</strong> Development, prototyping</p>
+                    <p><strong>Advantages:</strong> Convenient, stable, includes programming capability</p>
+                    <p><strong>Limitations:</strong> Requires USB connection</p>
+                </div>
+                
+                <div class="power-option">
+                    <div class="power-icon">🔋</div>
+                    <h3>Battery Power</h3>
+                    <p><strong>Voltage:</strong> 3.7V (Li-ion) or 3.3V direct</p>
+                    <p><strong>Current:</strong> Depends on battery capacity</p>
+                    <p><strong>Best for:</strong> Portable, wireless applications</p>
+                    <p><strong>Advantages:</strong> Portable, no cables needed</p>
+                    <p><strong>Limitations:</strong> Limited runtime, requires charging</p>
+                </div>
+                
+                <div class="power-option">
+                    <div class="power-icon">⚡</div>
+                    <h3>External Power Supply</h3>
+                    <p><strong>Voltage:</strong> 5V-12V via VIN pin</p>
+                    <p><strong>Current:</strong> Depends on power supply</p>
+                    <p><strong>Best for:</strong> Permanent installations, high-power applications</p>
+                    <p><strong>Advantages:</strong> Stable, can power additional components</p>
+                    <p><strong>Limitations:</strong> Requires external power source</p>
+                </div>
+            </div>
+            
+            <div class="warning">
+                <h4>⚠️ Important Power Considerations</h4>
+                <ul>
+                    <li><strong>Voltage Range:</strong> ESP32 operates at 3.3V. Never apply 5V directly to GPIO pins!</li>
+                    <li><strong>Current Requirements:</strong> ESP32 typically uses 80-260mA during Wi-Fi operation</li>
+                    <li><strong>Power Sequencing:</strong> Ensure stable power during boot process</li>
+                    <li><strong>Decoupling Capacitors:</strong> Use 100nF and 10μF capacitors near VDD pins</li>
+                </ul>
+            </div>
+            
+            <h3>Power Consumption by Mode</h3>
+            <table class="pin-table">
+                <thead>
+                    <tr>
+                        <th>Mode</th>
+                        <th>Current Consumption</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Deep Sleep</td>
+                        <td>10μA - 150μA</td>
+                        <td>Lowest power, RTC active</td>
+                    </tr>
+                    <tr>
+                        <td>Light Sleep</td>
+                        <td>0.8mA</td>
+                        <td>CPU paused, peripherals active</td>
+                    </tr>
+                    <tr>
+                        <td>Modem Sleep</td>
+                        <td>3mA - 20mA</td>
+                        <td>Wi-Fi/Bluetooth disabled</td>
+                    </tr>
+                    <tr>
+                        <td>Active (No Wi-Fi)</td>
+                        <td>30mA - 50mA</td>
+                        <td>CPU running, radio off</td>
+                    </tr>
+                    <tr>
+                        <td>Active (Wi-Fi)</td>
+                        <td>80mA - 260mA</td>
+                        <td>Wi-Fi transmitting/receiving</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="pin-configuration">
+            <h2>MicroPython Pin Configuration Examples</h2>
+            <p>Here are practical examples of configuring ESP32 pins for different purposes:</p>
+            
+            <div class="pin-configuration">
+                <div class="config-card">
+                    <div class="config-icon">💡</div>
+                    <h3>Digital Output (LED)</h3>
+                    <div class="code-block">
+                        <pre><code>led = Pin(<span class="number">2</span>, Pin.OUT)
+led.on()   <span class="comment"># Turn on</span>
+led.off()  <span class="comment"># Turn off</span></code></pre>
+                    </div>
+                </div>
+                
+                <div class="config-card">
+                    <div class="config-icon">🔘</div>
+                    <h3>Digital Input (Button)</h3>
+                    <div class="code-block">
+                        <pre><code>button = Pin(<span class="number">4</span>, Pin.IN, Pin.PULL_UP)
+<span class="keyword">if</span> button.value() == <span class="number">0</span>:
+    print(<span class="string">"Button pressed"</span>)</code></pre>
+                    </div>
+                </div>
+                
+                <div class="config-card">
+                    <div class="config-icon">📊</div>
+                    <h3>Analog Input (Potentiometer)</h3>
+                    <div class="code-block">
+                        <pre><code>adc = ADC(Pin(<span class="number">36</span>))
+adc.atten(ADC.ATTN_11DB)
+value = adc.read()</code></pre>
+                    </div>
+                </div>
+                
+                <div class="config-card">
+                    <div class="config-icon">🎛️</div>
+                    <h3>PWM Output (LED Brightness)</h3>
+                    <div class="code-block">
+                        <pre><code>pwm = PWM(Pin(<span class="number">2</span>))
+pwm.freq(<span class="number">1000</span>)
+pwm.duty(<span class="number">512</span>)  <span class="comment"># 50% brightness</span></code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="best-practices">
+            <h2>ESP32 Pin Usage Best Practices</h2>
+            
+            <h3>✅ Do:</h3>
+            <ul>
+                <li>Use GPIO pins 4, 5, 12-19, 21-23, 25-27, 32-33 for general purposes</li>
+                <li>Add pull-up resistors for buttons and switches (or use internal pull-ups)</li>
+                <li>Use current-limiting resistors for LEDs (220-470Ω)</li>
+                <li>Keep digital signals away from analog inputs to reduce noise</li>
+                <li>Use the 3.3V power pin for sensors and peripherals</li>
+            </ul>
+            
+            <h3>❌ Don't:</h3>
+            <ul>
+                <li>Apply voltages higher than 3.3V to any GPIO pin</li>
+                <li>Exceed 12mA per pin or 200mA total for all pins</li>
+                <li>Use strapping pins (0, 2, 4, 5, 12, 15) for critical functions</li>
+                <li>Connect heavy loads directly to GPIO pins (use transistors or drivers)</li>
+                <li>Leave floating inputs - always use pull-up or pull-down resistors</li>
+            </ul>
+            
+            <h3>Strapping Pins (Special Attention Required)</h3>
+            <p>These pins affect the boot mode and should be used carefully:</p>
+            <table class="pin-table">
+                <thead>
+                    <tr>
+                        <th>Pin</th>
+                        <th>Boot Function</th>
+                        <th>Recommended Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GPIO 0</td>
+                        <td>Boot mode selection</td>
+                        <td>Use with pull-up resistor, avoid frequent toggling</td>
+                    </tr>
+                    <tr>
+                        <td>GPIO 2</td>
+                        <td>Boot mode selection</td>
+                        <td>Often connected to onboard LED, generally safe</td>
+                    </tr>
+                    <tr>
+                        <td>GPIO 4</td>
+                        <td>Boot mode selection</td>
+                        <td>Generally safe for general I/O</td>
+                    </tr>
+                    <tr>
+                        <td>GPIO 5</td>
+                        <td>Boot mode selection</td>
+                        <td>Generally safe for general I/O</td>
+                    </tr>
+                    <tr>
+                        <td>GPIO 12</td>
+                        <td>Boot voltage selection</td>
+                        <td>Use with pull-down resistor, avoid using if possible</td>
+                    </tr>
+                    <tr>
+                        <td>GPIO 15</td>
+                        <td>Boot mode selection</td>
+                        <td>Use with pull-down resistor</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>ESP32 Pin Configuration and Power Supply Guide</p>
+            <p>Complete reference for ESP32 GPIO pins and power requirements</p>
+        </div>
+    </footer>
+
+    <script>
+        // Function to copy code to clipboard
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block').querySelector('code');
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            // Visual feedback
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
+        }
+
+        // Tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Add active class to current tab
+                    this.classList.add('active');
+                    document.getElementById(`${tabName}-tab`).classList.add('active');
+                });
+            });
+        });
+
+        // Syntax highlighting helper
+        function highlightCode() {
+            document.querySelectorAll('code').forEach(block => {
+                let code = block.innerHTML;
+                
+                // Basic syntax highlighting
+                code = code
+                    .replace(/(from|import|def|class|if|elif|else|while|for|try|except|finally|with|as|return|yield|break|continue|pass|lambda)\b/g, '<span class="keyword">$1</span>')
+                    .replace(/(True|False|None)\b/g, '<span class="keyword">$1</span>')
+                    .replace(/(\d+)/g, '<span class="number">$1</span>')
+                    .replace(/(#.*$)/gm, '<span class="comment">$1</span>')
+                    .replace(/(print|range|len|str|int|float|input)\b/g, '<span class="function">$1</span>');
+                
+                block.innerHTML = code;
+            });
+        }
+
+        // Apply syntax highlighting when page loads
+        document.addEventListener('DOMContentLoaded', highlightCode);
+    </script>
+</body>
+</html>
