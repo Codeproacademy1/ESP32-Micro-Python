@@ -104,6 +104,7 @@
             transition: all var(--transition-speed);
             border-left: 4px solid transparent;
             font-size: 0.95rem;
+            cursor: pointer;
         }
 
         .menu-item i {
@@ -375,6 +376,136 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+        /* External content styling */
+        .external-content {
+            width: 100%;
+        }
+        
+        .external-content img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .external-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .external-content table, .external-content th, .external-content td {
+            border: 1px solid #ddd;
+        }
+        
+        .external-content th, .external-content td {
+            padding: 8px 12px;
+            text-align: left;
+        }
+        
+        .external-content th {
+            background-color: #f2f2f2;
+        }
+        
+        .external-content pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        
+        .external-content code {
+            font-family: 'Courier New', monospace;
+        }
+        
+        .external-content h1, .external-content h2, .external-content h3 {
+            color: var(--primary-color);
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .external-content ul, .external-content ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .external-content a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+        
+        .external-content a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Error message */
+        .error-message {
+            background-color: #ffe6e6;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .error-title {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #c0392b;
+        }
+        
+        /* Iframe styling */
+        .content-iframe {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .iframe-container {
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .iframe-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        
+        .iframe-overlay h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .iframe-overlay p {
+            margin-bottom: 15px;
+            color: #666;
+        }
+        
+        .btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -391,92 +522,92 @@
             
             <div class="menu-container">
                 <nav class="menu">
-                    <a href="index.html" class="menu-item active">
+                    <a class="menu-item active" data-type="internal" data-section="esp32-intro">
                         <span class="item-number">00</span>
                         <i class="fas fa-info-circle"></i>
                         <span class="item-text">ESP32 Intro</span>
                     </a>
-                    <a href="basic-electronics.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="basic-electronics">
                         <span class="item-number">01</span>
                         <i class="fas fa-bolt"></i>
                         <span class="item-text">Basic Electronics</span>
                     </a>
-                    <a href="input-output-pins.html" class="menu-item">
+                    <a class="menu-item" data-type="external" data-url="https://codeproacademy1.github.io/ESP32-Micro-Python/I_O_pins.html">
                         <span class="item-number">02</span>
                         <i class="fas fa-microchip"></i>
                         <span class="item-text">Input/Output Pins</span>
                     </a>
-                    <a href="https://codeproacademy1.github.io/ESP32-Micro-Python/LED_With_ESP32.html" class="menu-item">
+                    <a class="menu-item" data-type="external" data-url="https://codeproacademy1.github.io/ESP32-Micro-Python/LED_With_ESP32.html">
                         <span class="item-number">03</span>
                         <i class="fas fa-lightbulb"></i>
                         <span class="item-text">LEDs</span>
                     </a>
-                    <a href="rgb-led.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="rgb-led">
                         <span class="item-number">04</span>
                         <i class="fas fa-palette"></i>
                         <span class="item-text">RGB LED</span>
                     </a>
-                    <a href="seven-segment.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="seven-segment">
                         <span class="item-number">05</span>
                         <i class="fas fa-hashtag"></i>
                         <span class="item-text">Seven Segment</span>
                     </a>
-                    <a href="buttons.html" class="menu-item">
+                    <a class="menu-item" data-type="external" data-url="https://codeproacademy1.github.io/ESP32-Micro-Python/Button_With_ESP32.html">
                         <span class="item-number">06</span>
                         <i class="fas fa-toggle-on"></i>
                         <span class="item-text">Buttons</span>
                     </a>
-                    <a href="dc-motor.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="dc-motor">
                         <span class="item-number">07</span>
                         <i class="fas fa-cogs"></i>
                         <span class="item-text">DC Motor</span>
                     </a>
-                    <a href="lcd-i2c.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="lcd-i2c">
                         <span class="item-number">08</span>
                         <i class="fas fa-tablet-alt"></i>
                         <span class="item-text">LCD (I2C)</span>
                     </a>
-                    <a href="keypad.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="keypad">
                         <span class="item-number">09</span>
                         <i class="fas fa-keyboard"></i>
                         <span class="item-text">Keypad</span>
                     </a>
-                    <a href="servo-motor.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="servo-motor">
                         <span class="item-number">10</span>
                         <i class="fas fa-cog"></i>
                         <span class="item-text">Servo Motor</span>
                     </a>
-                    <a href="ultrasonic-sensor.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="ultrasonic-sensor">
                         <span class="item-number">11</span>
                         <i class="fas fa-ruler-vertical"></i>
                         <span class="item-text">Ultrasonic Sensor</span>
                     </a>
-                    <a href="ir-sensor.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="ir-sensor">
                         <span class="item-number">12</span>
                         <i class="fas fa-infinity"></i>
                         <span class="item-text">IR Sensor</span>
                     </a>
-                    <a href="temperature-sensor.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="temperature-sensor">
                         <span class="item-number">13</span>
                         <i class="fas fa-thermometer-half"></i>
                         <span class="item-text">Temp Sensor</span>
                     </a>
-                    <a href="potentiometer.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="potentiometer">
                         <span class="item-number">14</span>
                         <i class="fas fa-sliders-h"></i>
                         <span class="item-text">Potentiometer</span>
                     </a>
-                    <a href="bluetooth.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="bluetooth">
                         <span class="item-number">15</span>
                         <i class="fab fa-bluetooth"></i>
                         <span class="item-text">Bluetooth</span>
                     </a>
-                    <a href="rfid.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="rfid">
                         <span class="item-number">16</span>
                         <i class="fas fa-id-card"></i>
                         <span class="item-text">RFID</span>
                     </a>
-                    <a href="wifi.html" class="menu-item">
+                    <a class="menu-item" data-type="internal" data-section="wifi">
                         <span class="item-number">17</span>
                         <i class="fas fa-wifi"></i>
                         <span class="item-text">WiFi</span>
@@ -488,8 +619,8 @@
         <!-- Main Content Area -->
         <main class="main-content">
             <div class="content-header">
-                <h2>ESP32 Introduction</h2>
-                <p>Getting started with the ESP32 microcontroller</p>
+                <h2 id="content-title">ESP32 Introduction</h2>
+                <p id="content-subtitle">Getting started with the ESP32 microcontroller</p>
             </div>
             
             <div class="content-body">
@@ -498,72 +629,105 @@
                     <p>Loading content...</p>
                 </div>
                 
-                <div class="content-section" id="content-container">
-                    <div class="section">
-                        <p>The ESP32 is a powerful, low-cost microcontroller with integrated Wi-Fi and Bluetooth capabilities. This guide will help you learn how to interface with various electronic components using the ESP32.</p>
+                <div id="content-container">
+                    <!-- ESP32 Intro Section -->
+                    <div class="content-section active" id="esp32-intro">
+                        <div class="section">
+                            <p>The ESP32 is a powerful, low-cost microcontroller with integrated Wi-Fi and Bluetooth capabilities. This guide will help you learn how to interface with various electronic components using the ESP32.</p>
+                            
+                            <img src="https://randomnerdtutorials.com/wp-content/uploads/2019/05/ESP32-DOIT-DEVKIT-V1-Board-Pinout-36-GPIOs-updated.jpg" alt="ESP32 Development Board" class="component-image">
+                            <p class="image-caption">ESP32 Development Board</p>
+                        </div>
                         
-                        <img src="https://randomnerdtutorials.com/wp-content/uploads/2019/05/ESP32-DOIT-DEVKIT-V1-Board-Pinout-36-GPIOs-updated.jpg" alt="ESP32 Development Board" class="component-image">
-                        <p class="image-caption">ESP32 Development Board</p>
-                    </div>
-                    
-                    <div class="section">
-                        <h3 class="section-title">Getting Started</h3>
-                        <p>Before working with components, make sure you have:</p>
-                        <ul>
-                            <li>An ESP32 development board</li>
-                            <li>USB cable for programming</li>
-                            <li>Arduino IDE or PlatformIO installed</li>
-                            <li>Basic electronic components (breadboard, jumper wires, resistors)</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="note">
-                        <div class="note-title">Learning Path</div>
-                        <p>We recommend following these steps for beginners:</p>
-                        <ol>
-                            <li>Start with <a href="basic-electronics.html">Basic Electronics</a></li>
-                            <li>Understand <a href="input-output-pins.html">Input/Output Pins</a></li>
-                            <li>Try simple <a href="leds.html">LED projects</a></li>
-                            <li>Move to <a href="buttons.html">button inputs</a></li>
-                            <li>Explore more advanced components</li>
-                        </ol>
-                    </div>
-                    
-                    <div class="section">
-                        <h3 class="section-title">Key Features</h3>
-                        <p>The ESP32 offers several advantages:</p>
+                        <div class="section">
+                            <h3 class="section-title">Getting Started</h3>
+                            <p>Before working with components, make sure you have:</p>
+                            <ul>
+                                <li>An ESP32 development board</li>
+                                <li>USB cable for programming</li>
+                                <li>Arduino IDE or PlatformIO installed</li>
+                                <li>Basic electronic components (breadboard, jumper wires, resistors)</li>
+                            </ul>
+                        </div>
                         
-                        <table class="pin-table">
-                            <thead>
-                                <tr>
-                                    <th>Feature</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Dual-Core Processor</td>
-                                    <td>Two Xtensa 32-bit LX6 CPUs at 240MHz</td>
-                                </tr>
-                                <tr>
-                                    <td>Wireless Connectivity</td>
-                                    <td>Wi-Fi 802.11 b/g/n and Bluetooth 4.2</td>
-                                </tr>
-                                <tr>
-                                    <td>GPIO Pins</td>
-                                    <td>Up to 36 programmable pins</td>
-                                </tr>
-                                <tr>
-                                    <td>Analog Inputs</td>
-                                    <td>18 channels of 12-bit ADC</td>
-                                </tr>
-                                <tr>
-                                    <td>Low Power</td>
-                                    <td>Multiple sleep modes for battery operation</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="note">
+                            <div class="note-title">Learning Path</div>
+                            <p>We recommend following these steps for beginners:</p>
+                            <ol>
+                                <li>Start with Basic Electronics</li>
+                                <li>Understand Input/Output Pins</li>
+                                <li>Try simple LED projects</li>
+                                <li>Move to button inputs</li>
+                                <li>Explore more advanced components</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="section">
+                            <h3 class="section-title">Key Features</h3>
+                            <p>The ESP32 offers several advantages:</p>
+                            
+                            <table class="pin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Feature</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Dual-Core Processor</td>
+                                        <td>Two Xtensa 32-bit LX6 CPUs at 240MHz</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Wireless Connectivity</td>
+                                        <td>Wi-Fi 802.11 b/g/n and Bluetooth 4.2</td>
+                                    </tr>
+                                    <tr>
+                                        <td>GPIO Pins</td>
+                                        <td>Up to 36 programmable pins</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Analog Inputs</td>
+                                        <td>18 channels of 12-bit ADC</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Low Power</td>
+                                        <td>Multiple sleep modes for battery operation</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                    
+                    <!-- Other internal sections would be here -->
+                    <div class="content-section" id="basic-electronics">
+                        <div class="section">
+                            <h3 class="section-title">Basic Electronics</h3>
+                            <p>Understanding fundamental electronic concepts is essential before working with the ESP32.</p>
+                            
+                            <img src="https://www.electronics-tutorials.ws/wp-content/uploads/2013/08/dccirc1.gif" alt="Basic Electronics" class="component-image">
+                            <p class="image-caption">Basic Electronic Circuit</p>
+                        </div>
+                        
+                        <div class="section">
+                            <h3 class="section-title">Key Concepts</h3>
+                            <ul>
+                                <li><strong>Voltage:</strong> The electrical potential difference</li>
+                                <li><strong>Current:</strong> The flow of electrical charge</li>
+                                <li><strong>Resistance:</strong> Opposition to current flow</li>
+                                <li><strong>Ohm's Law:</strong> V = I × R</li>
+                                <li><strong>Power:</strong> P = V × I</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="note">
+                            <div class="note-title">Safety First</div>
+                            <p>Always disconnect power before making changes to your circuit. Use appropriate resistors to limit current and prevent damage to components.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- External content will be loaded here -->
+                    <div id="external-content-container" style="display: none;"></div>
                 </div>
             </div>
         </main>
@@ -571,47 +735,153 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Highlight the active menu item based on current page
-            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
             const menuItems = document.querySelectorAll('.menu-item');
-            const loadingIndicator = document.getElementById('loading-indicator');
             const contentContainer = document.getElementById('content-container');
+            const externalContentContainer = document.getElementById('external-content-container');
+            const contentTitle = document.getElementById('content-title');
+            const contentSubtitle = document.getElementById('content-subtitle');
+            const loadingIndicator = document.getElementById('loading-indicator');
             
-            // Remove active class from all items and add to current page
-            menuItems.forEach(item => {
-                item.classList.remove('active');
+            // Content titles and subtitles for each section
+            const sectionTitles = {
+                'esp32-intro': 'ESP32 Introduction',
+                'basic-electronics': 'Basic Electronics',
+                'input-output-pins': 'Input/Output Pins',
+                'https://codeproacademy1.github.io/ESP32-Micro-Python/LED_With_ESP32.html': 'LEDs with ESP32',
+                'rgb-led': 'RGB LED',
+                'seven-segment': 'Seven Segment Display',
+                'https://codeproacademy1.github.io/ESP32-Micro-Python/Button_With_ESP32.html': 'Buttons with ESP32',
+                'dc-motor': 'DC Motor Control',
+                'lcd-i2c': 'LCD Display (I2C)',
+                'keypad': 'Matrix Keypad',
+                'servo-motor': 'Servo Motor',
+                'ultrasonic-sensor': 'Ultrasonic Sensor',
+                'ir-sensor': 'IR Sensor',
+                'temperature-sensor': 'Temperature Sensor',
+                'potentiometer': 'Potentiometer',
+                'bluetooth': 'Bluetooth Communication',
+                'rfid': 'RFID Reader',
+                'wifi': 'WiFi Connectivity'
+            };
+            
+            const sectionSubtitles = {
+                'esp32-intro': 'Getting started with the ESP32 microcontroller',
+                'basic-electronics': 'Understanding fundamental electronic concepts',
+                'input-output-pins': 'Configuring GPIO pins for various functions',
+                'https://codeproacademy1.github.io/ESP32-Micro-Python/LED_With_ESP32.html': 'Controlling LEDs with the ESP32',
+                'rgb-led': 'Creating colors with RGB LEDs',
+                'seven-segment': 'Displaying numbers with seven segment displays',
+                'https://codeproacademy1.github.io/ESP32-Micro-Python/Button_With_ESP32.html': 'Adding user input with buttons',
+                'dc-motor': 'Controlling DC motors with the ESP32',
+                'lcd-i2c': 'Displaying information on LCD screens',
+                'keypad': 'Reading input from matrix keypads',
+                'servo-motor': 'Precise control of servo motors',
+                'ultrasonic-sensor': 'Measuring distance with ultrasonic sensors',
+                'ir-sensor': 'Detecting objects with infrared sensors',
+                'temperature-sensor': 'Measuring temperature with sensors',
+                'potentiometer': 'Reading analog values from potentiometers',
+                'bluetooth': 'Wireless communication via Bluetooth',
+                'rfid': 'Reading RFID tags with the ESP32',
+                'wifi': 'Connecting to WiFi networks'
+            };
+            
+            // Function to show a specific content section
+            function showContent(type, url, sectionId) {
+                // Show loading indicator
+                loadingIndicator.style.display = 'block';
+                externalContentContainer.style.display = 'none';
                 
-                // Extract page name from href
-                const itemPage = item.getAttribute('href');
+                // Hide all internal content sections
+                const internalSections = document.querySelectorAll('.content-section');
+                internalSections.forEach(section => {
+                    section.classList.remove('active');
+                    section.style.display = 'none';
+                });
                 
-                // Add active class if this is the current page
-                if (itemPage === currentPage) {
-                    item.classList.add('active');
+                // Update the title and subtitle
+                contentTitle.textContent = sectionTitles[url] || sectionTitles[sectionId] || 'ESP32 Component';
+                contentSubtitle.textContent = sectionSubtitles[url] || sectionSubtitles[sectionId] || 'Component guide';
+                
+                // Check if we're loading internal or external content
+                if (type === 'internal') {
+                    // Show internal content
+                    setTimeout(() => {
+                        const targetSection = document.getElementById(sectionId);
+                        if (targetSection) {
+                            targetSection.classList.add('active');
+                            targetSection.style.display = 'block';
+                        }
+                        
+                        loadingIndicator.style.display = 'none';
+                        window.scrollTo(0, 0);
+                    }, 300);
+                } else {
+                    // Load external content using iframe
+                    loadExternalContentWithIframe(url);
                 }
-            });
+            }
             
-            // Handle navigation with smooth transitions
+            // Function to load external content using iframe
+            function loadExternalContentWithIframe(url) {
+                externalContentContainer.innerHTML = `
+                    <div class="iframe-container">
+                        <iframe class="content-iframe" src="${url}" id="external-iframe"></iframe>
+                      
+                    </div>
+                `;
+                
+                externalContentContainer.style.display = 'block';
+                loadingIndicator.style.display = 'none';
+                
+                // Add event listener for the load button
+                document.getElementById('load-iframe').addEventListener('click', function() {
+                    document.getElementById('iframe-overlay').style.display = 'none';
+                    document.getElementById('external-iframe').style.display = 'block';
+                });
+                
+                // Check if iframe loaded successfully
+                const iframe = document.getElementById('external-iframe');
+                iframe.onload = function() {
+                    document.getElementById('iframe-overlay').style.display = 'none';
+                };
+                
+                iframe.onerror = function() {
+                    document.getElementById('iframe-overlay').innerHTML = `
+                        <div class="error-message">
+                            <div class="error-title">Error Loading Content</div>
+                            <p>Unable to load content from ${url}. The content might be temporarily unavailable or blocked by your browser.</p>
+                            <p><a href="${url}" target="_blank">Click here to open the content in a new tab</a></p>
+                        </div>
+                    `;
+                };
+                
+                window.scrollTo(0, 0);
+            }
+            
+            // Add click event listeners to menu items
             menuItems.forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
                     
-                    const targetPage = this.getAttribute('href');
+                    const type = this.getAttribute('data-type');
+                    const url = this.getAttribute('data-url');
+                    const sectionId = this.getAttribute('data-section');
                     
-                    // Don't do anything if we're already on this page
-                    if (targetPage === currentPage) return;
+                    // Remove active class from all menu items
+                    menuItems.forEach(item => {
+                        item.classList.remove('active');
+                    });
                     
-                    // Show loading indicator
-                    contentContainer.style.display = 'none';
-                    loadingIndicator.style.display = 'block';
+                    // Add active class to clicked menu item
+                    this.classList.add('active');
                     
-                    // Simulate page navigation (in a real scenario, this would be an actual page load)
-                    setTimeout(() => {
-                        // In a real implementation, this would navigate to the actual page
-                        // For this demo, we'll simulate content loading
-                        window.location.href = targetPage;
-                    }, 800);
+                    // Show the corresponding content
+                    showContent(type, url, sectionId);
                 });
             });
+            
+            // Show the initial section (ESP32 Intro)
+            showContent('internal', '', 'esp32-intro');
         });
     </script>
 </body>
