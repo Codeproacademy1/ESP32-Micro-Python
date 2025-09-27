@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 RGB LED Projects with MicroPython</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --info: #1abc9c;
+            --rgb-red: #ff0000;
+            --rgb-green: #00ff00;
+            --rgb-blue: #0000ff;
+            --rgb-yellow: #ffff00;
+            --rgb-magenta: #ff00ff;
+            --rgb-cyan: #00ffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        h1, h2, h3, h4 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            color: var(--secondary);
+        }
+        
+        h4 {
+            font-size: 1.2rem;
+            color: var(--info);
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .rgb-explanation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .rgb-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .rgb-diagram {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+        
+        .rgb-led {
+            font-size: 100px;
+            margin-bottom: 1rem;
+            animation: rgbCycle 5s infinite;
+        }
+        
+        @keyframes rgbCycle {
+            0% { color: var(--rgb-red); }
+            16% { color: var(--rgb-green); }
+            32% { color: var(--rgb-blue); }
+            48% { color: var(--rgb-yellow); }
+            64% { color: var(--rgb-magenta); }
+            80% { color: var(--rgb-cyan); }
+            100% { color: var(--rgb-red); }
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .color-item {
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .project-card {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 4px solid var(--secondary);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--rgb-red), var(--rgb-green), var(--rgb-blue));
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .project-card h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #444;
+        }
+        
+        .copy-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .keyword {
+            color: #569cd6;
+        }
+        
+        .function {
+            color: #dcdcaa;
+        }
+        
+        .string {
+            color: #ce9178;
+        }
+        
+        .comment {
+            color: #6a9955;
+            font-style: italic;
+        }
+        
+        .number {
+            color: #b5cea8;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+            margin-top: 0.5rem;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .connection-guide {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .wiring-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .wiring-diagram {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+        
+        .esp32-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+        
+        .project-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 900px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--dark);
+            z-index: 10;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            padding: 0.5rem 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+        }
+        
+        .tab-button.active {
+            border-bottom: 2px solid var(--secondary);
+            color: var(--secondary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .demo-area {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .rgb-demo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            background: #000;
+            transition: background 0.5s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .demo-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .demo-btn {
+            padding: 0.5rem 1rem;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .rgb-explanation, .connection-guide {
+                flex-direction: column;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 1rem;
+            }
+            
+            .tab-buttons {
+                flex-direction: column;
+            }
+            
+            .tab-button {
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            
+            .color-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>ESP32 RGB LED Projects with MicroPython</h1>
+            <p>Create stunning color effects with RGB LEDs and ESP32 using MicroPython</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <section id="what-is-rgb">
+            <h2>What is an RGB LED?</h2>
+            <div class="rgb-explanation">
+                <div class="rgb-info">
+                    <p>An <strong>RGB LED</strong> is a special type of light-emitting diode that can produce different colors by combining Red, Green, and Blue light. By controlling the intensity of each color, you can create millions of different colors.</p>
+                    
+                    <p><strong>Types of RGB LEDs:</strong></p>
+                    <ul>
+                        <li><strong>Common Anode:</strong> All three LEDs share a common positive connection</li>
+                        <li><strong>Common Cathode:</strong> All three LEDs share a common negative connection</li>
+                        <li><strong>Integrated RGB:</strong> All three colors in one package with 4 pins</li>
+                    </ul>
+                    
+                    <p><strong>How RGB Color Mixing Works:</strong></p>
+                    <div class="color-grid">
+                        <div class="color-item" style="background: #ff0000;">Red</div>
+                        <div class="color-item" style="background: #00ff00;">Green</div>
+                        <div class="color-item" style="background: #0000ff;">Blue</div>
+                        <div class="color-item" style="background: #ffff00;">Red+Green=Yellow</div>
+                        <div class="color-item" style="background: #ff00ff;">Red+Blue=Magenta</div>
+                        <div class="color-item" style="background: #00ffff;">Green+Blue=Cyan</div>
+                        <div class="color-item" style="background: #ffffff; color: #333;">All=White</div>
+                        <div class="color-item" style="background: #000000; border: 1px solid #ccc;">None=Black</div>
+                    </div>
+                </div>
+                <div class="rgb-diagram">
+                    <div class="rgb-led">💡</div>
+                    <p>RGB LED Symbol</p>
+                    <img src="https://www.circuitbasics.com/wp-content/uploads/2016/04/Introduction-to-RGB-LEDs-RGB-LED-Pinout-1024x768.png" alt="RGB LED Diagram" class="esp32-img">
+                </div>
+            </div>
+        </section>
+
+        <section id="connecting-rgb">
+            <h2>How to Connect RGB LED with ESP32</h2>
+            <div class="connection-guide">
+                <div class="wiring-info">
+                    <p>Connecting an RGB LED to ESP32 requires understanding the LED type and proper current limiting.</p>
+                    
+                    <h3>For Common Cathode RGB LED:</h3>
+                    <ol>
+                        <li>Connect the common cathode (longest pin) to GND</li>
+                        <li>Connect Red pin to ESP32 GPIO (with 220Ω resistor)</li>
+                        <li>Connect Green pin to ESP32 GPIO (with 220Ω resistor)</li>
+                        <li>Connect Blue pin to ESP32 GPIO (with 220Ω resistor)</li>
+                    </ol>
+                    
+                    <h3>For Common Anode RGB LED:</h3>
+                    <ol>
+                        <li>Connect the common anode (longest pin) to 3.3V</li>
+                        <li>Connect Red pin to ESP32 GPIO (with 220Ω resistor)</li>
+                        <li>Connect Green pin to ESP32 GPIO (with 220Ω resistor)</li>
+                        <li>Connect Blue pin to ESP32 GPIO (with 220Ω resistor)</li>
+                    </ol>
+                    
+                    <div class="warning" style="background: #fff3cd; padding: 1rem; border-radius: 4px; margin: 1rem 0;">
+                        <h4>⚠️ Important Notes:</h4>
+                        <ul>
+                            <li>Always use current-limiting resistors (220-470Ω)</li>
+                            <li>ESP32 GPIO pins operate at 3.3V (not 5V tolerant)</li>
+                            <li>Maximum current per pin: 40mA (12mA recommended)</li>
+                            <li>Use PWM for smooth color transitions</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="wiring-diagram">
+                    <img src="https://randomnerdtutorials.com/wp-content/uploads/2019/01/ESP32-RGB-LED-Wiring-Diagram.png" alt="ESP32 RGB LED Connection" class="esp32-img">
+                    <p>ESP32 with Common Cathode RGB LED</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="micropython-basics">
+            <h2>MicroPython Basics for RGB LED Control</h2>
+            <p>RGB LEDs require PWM (Pulse Width Modulation) for color control. Here's the basic setup:</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Basic RGB LED Setup</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code><span class="keyword">from</span> machine <span class="keyword">import</span> Pin, PWM
+<span class="keyword">import</span> time
+
+<span class="comment"># Initialize PWM for each color (Common Cathode)</span>
+red = PWM(Pin(<span class="number">15</span>), freq=<span class="number">1000</span>)    <span class="comment"># GPIO15 for Red</span>
+green = PWM(Pin(<span class="number">2</span>), freq=<span class="number">1000</span>)   <span class="comment"># GPIO2 for Green</span>
+blue = PWM(Pin(<span class="number">4</span>), freq=<span class="number">1000</span>)    <span class="comment"># GPIO4 for Blue</span>
+
+<span class="comment"># Function to set RGB color (0-1023 for each channel)</span>
+<span class="keyword">def</span> <span class="function">set_color</span>(r, g, b):
+    red.duty(r)
+    green.duty(g)
+    blue.duty(b)
+
+<span class="comment"># Example: Set to red color</span>
+set_color(<span class="number">1023</span>, <span class="number">0</span>, <span class="number">0</span>)  <span class="comment"># Maximum red, no green or blue</span></code></pre>
+            </div>
+            
+            <h3>PWM Duty Cycle Values</h3>
+            <p>ESP32 PWM uses 10-bit resolution (0-1023):</p>
+            <ul>
+                <li><strong>0:</strong> Color channel completely off</li>
+                <li><strong>1023:</strong> Color channel at maximum brightness</li>
+                <li><strong>512:</strong> Color channel at 50% brightness</li>
+            </ul>
+            
+            <h3>Common Cathode vs Common Anode Code</h3>
+            <p>The code differs based on your RGB LED type:</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Common Anode RGB LED</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                </div>
+                <pre><code><span class="comment"># For Common Anode, invert the values</span>
+<span class="keyword">def</span> <span class="function">set_color_common_anode</span>(r, g, b):
+    red.duty(<span class="number">1023</span> - r)   <span class="comment"># Inverted for common anode</span>
+    green.duty(<span class="number">1023</span> - g)
+    blue.duty(<span class="number">1023</span> - b)</code></pre>
+            </div>
+        </section>
+
+        <section id="rgb-projects">
+            <h2>ESP32 RGB LED Projects</h2>
+            <p>Explore these RGB LED projects with ESP32 and MicroPython:</p>
+            
+            <div class="projects-grid">
+                <!-- Project cards will be generated by JavaScript -->
+            </div>
+        </section>
+
+        <section id="interactive-demo">
+            <h2>RGB Color Mixing Demo</h2>
+            <p>See how RGB values combine to create different colors:</p>
+            
+            <div class="demo-area">
+                <div class="rgb-demo" id="rgbDemo"></div>
+                <div class="demo-controls">
+                    <label>Red: <input type="range" id="redSlider" min="0" max="255" value="255"> <span id="redValue">255</span></label>
+                    <label>Green: <input type="range" id="greenSlider" min="0" max="255" value="0"> <span id="greenValue">0</span></label>
+                    <label>Blue: <input type="range" id="blueSlider" min="0" max="255" value="0"> <span id="blueValue">0</span></label>
+                </div>
+                <div class="demo-controls">
+                    <button class="demo-btn" onclick="setDemoColor(255, 0, 0)">Red</button>
+                    <button class="demo-btn" onclick="setDemoColor(0, 255, 0)">Green</button>
+                    <button class="demo-btn" onclick="setDemoColor(0, 0, 255)">Blue</button>
+                    <button class="demo-btn" onclick="setDemoColor(255, 255, 0)">Yellow</button>
+                    <button class="demo-btn" onclick="setDemoColor(255, 0, 255)">Magenta</button>
+                    <button class="demo-btn" onclick="setDemoColor(0, 255, 255)">Cyan</button>
+                    <button class="demo-btn" onclick="setDemoColor(255, 255, 255)">White</button>
+                    <button class="demo-btn" onclick="setDemoColor(0, 0, 0)">Off</button>
+                </div>
+                <p>ESP32 PWM Value: <span id="pwmValue">1023, 0, 0</span></p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="projectModal" class="project-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="modalContent">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>ESP32 RGB LED Projects with MicroPython</p>
+            <p>Create amazing color effects with ESP32 and RGB LEDs</p>
+        </div>
+    </footer>
+
+    <script>
+        // Project data
+        const projects = [
+            {
+                id: 10,
+                title: "RGB LED – Change Colors",
+                description: "Cycle through basic colors using an RGB LED",
+                idea: "Display different colors in sequence",
+                code: `from machine import Pin, PWM
+import time
+
+red = PWM(Pin(15), freq=1000)
+green = PWM(Pin(2), freq=1000)
+blue = PWM(Pin(4), freq=1000)
+
+def set_color(r, g, b):
+    red.duty(r)
+    green.duty(g)
+    blue.duty(b)
+
+while True:
+    set_color(1023, 0, 0)   # Red
+    time.sleep(1)
+    set_color(0, 1023, 0)   # Green
+    time.sleep(1)
+    set_color(0, 0, 1023)   # Blue
+    time.sleep(1)
+    set_color(1023, 1023, 0) # Yellow
+    time.sleep(1)
+    set_color(1023, 0, 1023) # Magenta
+    time.sleep(1)
+    set_color(0, 1023, 1023) # Cyan
+    time.sleep(1)
+    set_color(1023, 1023, 1023) # White
+    time.sleep(1)
+    set_color(0, 0, 0)     # Off
+    time.sleep(1)`,
+                components: ["ESP32", "RGB LED (Common Cathode)", "3x 220Ω resistors", "Breadboard", "Jumper wires"],
+                explanation: "This project demonstrates basic color cycling with an RGB LED. Each color is displayed for 1 second before moving to the next. The sequence includes all primary colors, secondary colors, white, and off state."
+            },
+            {
+                id: 11,
+                title: "RGB LED – Color Fading",
+                description: "Create smooth color transitions with fading effects",
+                idea: "Gradual transitions between colors",
+                code: `from machine import Pin, PWM
+import time
+
+red = PWM(Pin(15), freq=1000)
+green = PWM(Pin(2), freq=1000)
+blue = PWM(Pin(4), freq=1000)
+
+def set_color(r, g, b):
+    red.duty(r)
+    green.duty(g)
+    blue.duty(b)
+
+while True:
+    for i in range(0, 1024, 10): # Black → Red
+        set_color(i, 0, 0)
+        time.sleep(0.01)
+    for i in range(0, 1024, 10): # Red → Green
+        set_color(1023 - i, i, 0)
+        time.sleep(0.01)
+    for i in range(0, 1024, 10): # Green → Blue
+        set_color(0, 1023 - i, i)
+        time.sleep(0.01)
+    for i in range(0, 1024, 10): # Blue → White
+        set_color(i, i, 1023)
+        time.sleep(0.01)`,
+                components: ["ESP32", "RGB LED (Common Cathode)", "3x 220Ω resistors", "Breadboard", "Jumper wires"],
+                explanation: "This project creates smooth color fading transitions. It gradually increases red from off to full, then transitions from red to green, green to blue, and finally blue to white. The small steps (10) and short delays (0.01s) create a smooth fading effect."
+            },
+            {
+                id: 12,
+                title: "RGB LED – Random Colors",
+                description: "Generate random colors every second",
+                idea: "Display unpredictable color patterns",
+                code: `from machine import Pin, PWM
+import time, random
+
+red = PWM(Pin(15), freq=1000)
+green = PWM(Pin(2), freq=1000)
+blue = PWM(Pin(4), freq=1000)
+
+def set_color(r, g, b):
+    red.duty(r)
+    green.duty(g)
+    blue.duty(b)
+
+while True:
+    r = random.randint(0, 1023)
+    g = random.randint(0, 1023)
+    b = random.randint(0, 1023)
+    set_color(r, g, b)
+    time.sleep(1)`,
+                components: ["ESP32", "RGB LED (Common Cathode)", "3x 220Ω resistors", "Breadboard", "Jumper wires"],
+                explanation: "This project generates random colors by selecting random values for each color channel. Each second, a new random color is displayed. This creates an unpredictable and dynamic lighting effect."
+            },
+            {
+                id: 13,
+                title: "RGB LED – Traffic Light System",
+                description: "Simulate a traffic light sequence",
+                idea: "Red → Green → Yellow traffic light pattern",
+                code: `from machine import Pin, PWM
+import time
+
+red = PWM(Pin(15), freq=1000)
+green = PWM(Pin(2), freq=1000)
+blue = PWM(Pin(4), freq=1000)
+
+def set_color(r, g, b):
+    red.duty(r)
+    green.duty(g)
+    blue.duty(b)
+
+while True:
+    set_color(1023, 0, 0)     # Red
+    time.sleep(15)
+    set_color(0, 1023, 0)     # Green
+    time.sleep(15)
+    set_color(1023, 1023, 0)  # Yellow
+    time.sleep(5)
+    set_color(0, 0, 0)        # Off
+    time.sleep(1)`,
+                components: ["ESP32", "RGB LED (Common Cathode)", "3x 220Ω resistors", "Breadboard", "Jumper wires"],
+                explanation: "This project simulates a traffic light system using a single RGB LED. It follows the standard sequence: Red (15s) → Green (15s) → Yellow (5s) → Brief off state (1s) before repeating. The yellow color is created by mixing red and green."
+            }
+        ];
+
+        // Function to create project cards
+        function createProjectCards() {
+            const projectsGrid = document.querySelector('.projects-grid');
+            
+            projects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.innerHTML = `
+                    <h3>Project ${project.id}: ${project.title}</h3>
+                    <p>${project.description}</p>
+                    <button class="btn view-project" data-id="${project.id}">View Project</button>
+                `;
+                projectsGrid.appendChild(card);
+            });
+            
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-project').forEach(button => {
+                button.addEventListener('click', function() {
+                    const projectId = parseInt(this.getAttribute('data-id'));
+                    openProjectModal(projectId);
+                });
+            });
+            
+            // Also make the entire card clickable
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (!e.target.classList.contains('btn')) {
+                        const button = this.querySelector('.view-project');
+                        const projectId = parseInt(button.getAttribute('data-id'));
+                        openProjectModal(projectId);
+                    }
+                });
+            });
+        }
+
+        // Function to open project modal
+        function openProjectModal(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+            
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <h2>Project ${project.id}: ${project.title}</h2>
+                <p><strong>Idea:</strong> ${project.idea}</p>
+                <p><strong>Description:</strong> ${project.description}</p>
+                
+                <div class="tab-buttons">
+                    <button class="tab-button active" data-tab="code">MicroPython Code</button>
+                    <button class="tab-button" data-tab="explanation">Explanation</button>
+                    <button class="tab-button" data-tab="components">Components</button>
+                </div>
+                
+                <div class="tab-content active" id="code-tab">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Project ${project.id} Code</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                        </div>
+                        <pre><code>${formatCode(project.code)}</code></pre>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="explanation-tab">
+                    <h3>How It Works</h3>
+                    <p>${project.explanation}</p>
+                    
+                    <h3>Key Features</h3>
+                    <ul>
+                        <li>Uses PWM for precise color control</li>
+                        <li>ESP32's 10-bit PWM resolution (0-1023)</li>
+                        <li>Color mixing through RGB values</li>
+                        <li>Timing control for effects</li>
+                    </ul>
+                </div>
+                
+                <div class="tab-content" id="components-tab">
+                    <h3>Required Components</h3>
+                    <ul>
+                        ${project.components.map(comp => `<li>${comp}</li>`).join('')}
+                    </ul>
+                    
+                    <h3>Connection Guide</h3>
+                    <p>Connect the RGB LED to ESP32 as follows:</p>
+                    <ul>
+                        <li><strong>Red:</strong> GPIO15 with 220Ω resistor</li>
+                        <li><strong>Green:</strong> GPIO2 with 220Ω resistor</li>
+                        <li><strong>Blue:</strong> GPIO4 with 220Ω resistor</li>
+                        <li><strong>Common Cathode:</strong> Connect to GND</li>
+                    </ul>
+                    <p><em>Note: For Common Anode RGB LED, connect common pin to 3.3V and modify the code accordingly.</em></p>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button class="btn" onclick="navigateProject(${project.id - 1})" ${project.id === 10 ? 'disabled' : ''}>Previous Project</button>
+                    <button class="btn" onclick="navigateProject(${project.id + 1})" ${project.id === 13 ? 'disabled' : ''}>Next Project</button>
+                </div>
+            `;
+            
+            // Add tab functionality
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.tab-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Add active class to current tab
+                    this.classList.add('active');
+                    document.getElementById(`${tabName}-tab`).classList.add('active');
+                });
+            });
+            
+            // Show modal
+            document.getElementById('projectModal').style.display = 'block';
+        }
+
+        // Function to format code with syntax highlighting
+        function formatCode(code) {
+            return code
+                .replace(/from/g, '<span class="keyword">from</span>')
+                .replace(/import/g, '<span class="keyword">import</span>')
+                .replace(/def/g, '<span class="keyword">def</span>')
+                .replace(/while/g, '<span class="keyword">while</span>')
+                .replace(/if/g, '<span class="keyword">if</span>')
+                .replace(/True/g, '<span class="keyword">True</span>')
+                .replace(/False/g, '<span class="keyword">False</span>')
+                .replace(/PWM/g, '<span class="function">PWM</span>')
+                .replace(/duty/g, '<span class="function">duty</span>')
+                .replace(/freq/g, '<span class="function">freq</span>')
+                .replace(/sleep/g, '<span class="function">sleep</span>')
+                .replace(/set_color/g, '<span class="function">set_color</span>')
+                .replace(/#.*$/gm, '<span class="comment">$&</span>')
+                .replace(/\d+/g, '<span class="number">$&</span>');
+        }
+
+        // Function to copy code to clipboard
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block').querySelector('code');
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            // Visual feedback
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
+        }
+
+        // Function to navigate between projects
+        function navigateProject(projectId) {
+            if (projectId >= 10 && projectId <= 13) {
+                openProjectModal(projectId);
+            }
+        }
+
+        // Interactive RGB Demo
+        function updateDemo() {
+            const red = parseInt(document.getElementById('redSlider').value);
+            const green = parseInt(document.getElementById('greenSlider').value);
+            const blue = parseInt(document.getElementById('blueSlider').value);
+            
+            // Update display
+            document.getElementById('rgbDemo').style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;
+            document.getElementById('redValue').textContent = red;
+            document.getElementById('greenValue').textContent = green;
+            document.getElementById('blueValue').textContent = blue;
+            
+            // Convert to ESP32 PWM values (0-255 to 0-1023)
+            const pwmRed = Math.round(red * 4.0117); // 1023/255 ≈ 4.0117
+            const pwmGreen = Math.round(green * 4.0117);
+            const pwmBlue = Math.round(blue * 4.0117);
+            
+            document.getElementById('pwmValue').textContent = `${pwmRed}, ${pwmGreen}, ${pwmBlue}`;
+        }
+
+        function setDemoColor(r, g, b) {
+            document.getElementById('redSlider').value = r;
+            document.getElementById('greenSlider').value = g;
+            document.getElementById('blueSlider').value = b;
+            updateDemo();
+        }
+
+        // Close modal when clicking X
+        document.querySelector('.close-modal').addEventListener('click', function() {
+            document.getElementById('projectModal').style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('projectModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            createProjectCards();
+            
+            // Set up RGB demo
+            document.getElementById('redSlider').addEventListener('input', updateDemo);
+            document.getElementById('greenSlider').addEventListener('input', updateDemo);
+            document.getElementById('blueSlider').addEventListener('input', updateDemo);
+            
+            // Initialize demo
+            updateDemo();
+        });
+    </script>
+</body>
+</html>
